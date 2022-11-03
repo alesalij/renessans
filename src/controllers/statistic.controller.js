@@ -13,7 +13,7 @@ class statisticController {
     );
 
     proceeds.rows[0].proceeds = proceeds.rows[0].proceeds
-      ? proceeds.rows[0].proceeds
+      ? +proceeds.rows[0].proceeds
       : 0;
     res.json(proceeds.rows[0]);
   }
@@ -21,7 +21,18 @@ class statisticController {
   // получение массива данных
   async getDeals(req, res) {
     const deals = await db.query(
-      `select c.surname, c.name, c.phone, d.price, to_char(date_deal ::date,'yyyy-mm-dd') as date_deal, a.brand, a.model, d.amount  from deal d join customer c on c.id=d.customer_id join auto a on a.id=d.auto_id order by d.date_deal,c.surname,c.name, d.price;`
+      `select c.surname,
+                    c.name,
+                    c.phone,
+                    d.price,
+                    to_char(date_deal::date, 'yyyy-mm-dd') as date_deal,
+                    a.brand,
+                    a.model,
+                    d.amount
+             from deal d
+                      join customer c on c.id = d.customer_id
+                      join auto a on a.id = d.auto_id
+             order by d.date_deal, c.surname, c.name, d.price;`
     );
 
     res.json(deals.rows);
